@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BreatheEasy - Your Guided Breathing Practice</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
+    <style>
+    body {
+      background-color: #f8f9fa;
+      font-family: 'Arial', sans-serif;
+    }
+
+    header {
+      background-color: #007bff;
+      color: #fff;
+      padding: 2rem 0;
+      text-align: center;
+    }
+
+    .cta-section {
+      text-align: center;
+      padding: 4rem 1rem;
+    }
+
+    .cta-icon {
+      font-size: 4rem;
+      color: #007bff;
+      margin-bottom: 1rem;
+    }
+
+    .breathing-info {
+      text-align: center;
+      padding: 4rem 1rem;
+    }
+
+
+    .practice-btn {
+  background-color: #007bff; /* Ensure the color covers the entire button */
+  color: #fff;
+  padding: 10px 20px; /* Adjust padding to fit text */
+  font-size: 1rem; /* Adjust font size to fit text */
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  white-space: nowrap; /* Prevent text from wrapping */
+  display: inline-block; /* Ensure the button width adjusts to the text */
+  width: auto; /* Allow the button to adjust its width based on content */
+  max-width: 100%; /* Ensure the button doesn't overflow its container */
+  text-align: center; /* Center the text horizontally */
+  box-sizing: border-box; /* Ensure padding is included in the width */
+}
+
+    .practice-btn:hover {
+      background-color: #0056b3;
+    }
+
+    .footer {
+      background-color: #007bff;
+      color: #fff;
+      padding: 2rem 0;
+      text-align: center;
+    }
+
+    .img-fluid {
+      max-width: 100%;
+      height: auto;
+      border-radius: 10px;
+    }
+
+    .breathing-app-section {
+      display: none;
+      margin-top: 2rem;
+      padding: 2rem;
+      background: linear-gradient(to left top, #a9adb0, #46a2c7, #4a68bd);
+      border-radius: 10px;
+      color: #fff;
+      text-align: center;
+    }
+
+    .circle-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-top: 2rem;
+      margin-bottom: 2rem;
+      height: 40vh;
+    }
+
+    .circle {
+      width: 50px;
+      height: 50px;
+      background-color: blue;
+      border-radius: 50%;
+      transition: width 6s ease-in-out, height 6s ease-in-out;
+      position: relative;
+    }
+
+    .stopwatch {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: white;
+      font-size: 20px;
+    }
+
+    .secondstopwatch {
+      margin-top: 20px;
+      color: white;
+      font-size: 20px;
+      text-align: center;
+    }
+
+    .btn {
+      margin-top: 30px;
+      width: 30%;
+      height: 10%;
+    }
+
+    .reset-btn {
+      margin-top: 10px;
+      width: 100px;
+      height: 10%;
+    }
+
+    @keyframes breathe {
+      0%, 100% {
+        transform: scale(1);
+      }
+      50% {
+        transform: scale(2);
+      }
+    }
+
+    @keyframes changeColor {
+      0% {
+        background-color: rgb(110, 250, 16);
+      }
+      20% {
+        background-color: rgb(40, 179, 225);
+      }
+      40% {
+        background-color: rgb(64, 42, 208);
+      }
+      60% {
+        background-color: violet;
+      }
+      80% {
+        background-color: rgb(215, 215, 17);
+      }
+      100% {
+        background-color: rgb(22, 176, 203);
+      }
+    }
+
+    /* Responsive Styles */
+    @media (max-width: 600px) {
+      .circle-container {
+        margin-top: 2rem;
+      }
+      .breath-dot {
+        width: 50px;
+        height: 50px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navigation -->
+  <header>
+    <h1>BreatheEasy</h1>
+    <p>Your Guided Breathing Practice</p>
+  </header>
+
+<!-- Call to Action Section -->
+<section class="cta-section">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-8 mx-auto">
+          <i class="fas fa-leaf cta-icon"></i>
+          <h2>Experience the Power of Breath</h2>
+          <p>Find peace and balance through guided breathing sessions. Start your journey to a calmer, healthier you.</p>
+          <button id="startPracticeButton" class="btn btn-primary practice-btn">Start Your Practice</button>
+        </div>
+      </div>
+    </div>
+  </section>
+  <!-- Breathing App Section -->
+  <section id="breathingAppSection" class="breathing-app-section">
+    <div class="container">
+      <h1>Guided Breathing Mini Sessions</h1>
+      <button id="sessionButton" class="btn btn-success" onclick="toggleSession()">Start</button>
+      <div class="circle-container">
+        <div class="circle" id="expandingCircle">
+          <div class="stopwatch" id="stopwatch">0</div>
+        </div>
+      </div>
+      <div>
+        <div class="secondstopwatch" id="secondstopwatch">00:00:00</div>
+        <div class="secondstopwatch" id="elapsedtime">00:00:00</div>
+      </div>
+      <button id="doneButton" class="btn btn-danger mt-3">I am Done</button>
+    </div>
+  </section>
+
+  <!-- Breathing Info Section -->
+  <section class="breathing-info">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-6">
+          <h3>Why Guided Breathing?</h3>
+          <p>Learn about the benefits of mindful breathing and how it can positively impact your mental and physical well-being.</p>
+        </div>
+        <div class="col-md-6">
+          <img src="yogaa.jpg" alt="Breathing Exercise" class="img-fluid">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <p>&copy; 2024 BreatheEasy. All rights reserved.</p>
+  </footer>
+
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  <script>
+    // Breathing App Script
+    let isRunning = false;
+    let intervalId;
+    let secondStopwatchIntervalId;
+    let totalElapsedTime = 0;
+    let sessionStartTime = 0;
+    let totalSessionTime = 0;
+
+    function expandCircle() {
+      const expandingCircle = document.getElementById('expandingCircle');
+      expandingCircle.style.width = '200px';
+      expandingCircle.style.height = '200px';
+    }
+
+    function shrinkCircle() {
+      const expandingCircle = document.getElementById('expandingCircle');
+      expandingCircle.style.width = '50px';
+      expandingCircle.style.height = '50px';
+    }
+
+    function updateStopwatch(time) {
+      const stopwatch = document.getElementById('stopwatch');
+      stopwatch.innerText = time;
+    }
+
+    function updateSecondStopwatch() {
+      const secondStopwatch = document.getElementById('secondstopwatch');
+      let totalSeconds = Math.floor(totalElapsedTime / 1000);
+      let hours = Math.floor(totalSeconds / 3600);
+      let minutes = Math.floor((totalSeconds % 3600) / 60);
+      let seconds = totalSeconds % 60;
+
+      hours = hours < 10 ? "0" + hours : hours;
+      minutes = minutes < 10 ? "0" + minutes : minutes;
+      seconds = seconds < 10 ? "0" + seconds : seconds;
+
+      secondStopwatch.innerText = `${hours}:${minutes}:${seconds}`;
+    }
+
+    function animateCircle() {
+      let currentTime = 0;
+
+      intervalId = setInterval(() => {
+        if (currentTime <= 6) {
+          updateStopwatch(currentTime);
+          expandCircle();
+        } else {
+          updateStopwatch(12 - currentTime);
+          shrinkCircle();
+        }
+
+        if (currentTime === 12) {
+          currentTime = 0;
+        }
+
+        currentTime++;
+      }, 1000);
+
+      secondStopwatchIntervalId = setInterval(() => {
+        if (isRunning) {
+          totalElapsedTime += 1000;
+          updateSecondStopwatch();
+        }
+      }, 1000);
+    }
+
+    function toggleSession() {
+      const button = document.getElementById('sessionButton');
+
+      if (!isRunning) {
+        button.textContent = 'Stop';
+        isRunning = true;
+        sessionStartTime = Date.now();
+        animateCircle();
+      } else {
+        button.textContent = 'Start';
+        isRunning = false;
+        clearInterval(intervalId);
+        clearInterval(secondStopwatchIntervalId);
+        shrinkCircle();
+        updateStopwatch(0);
+        totalSessionTime += Date.now() - sessionStartTime;
+        displayTotalSessionTime();
+        resetSecondStopwatch();
+      }
+    }
+
+    function displayTotalSessionTime() {
+      const elapsedTimeElement = document.getElementById('elapsedtime');
+      let totalSeconds = Math.floor(totalSessionTime / 1000);
+      let hours = Math.floor(totalSeconds / 3600);
+      let minutes = Math.floor((totalSeconds % 3600) / 60);
+      let seconds = totalSeconds % 60;
+
+      hours = hours < 10 ? "0" + hours : hours;
+      minutes = minutes < 10 ? "0" + minutes : minutes;
+      seconds = seconds < 10 ? "0" + seconds : seconds;
+
+      elapsedTimeElement.innerText = `${hours}:${minutes}:${seconds}`;
+    }
+
+    function resetSecondStopwatch() {
+      totalElapsedTime = 0;
+      updateSecondStopwatch();
+    }
+
+    // Show Breathing App when "Start Your Practice" is clicked
+    document.getElementById('startPracticeButton').addEventListener('click', function() {
+      const breathingAppSection = document.getElementById('breathingAppSection');
+      breathingAppSection.style.display = 'block';
+    });
+
+    // Hide Breathing App when "I am Done" is clicked
+    document.getElementById('doneButton').addEventListener('click', function() {
+      const breathingAppSection = document.getElementById('breathingAppSection');
+      breathingAppSection.style.display = 'none';
+    });
+  </script>
+</body>
+</html>
