@@ -3,351 +3,891 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BreatheEasy - Your Guided Breathing Practice</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
+    <title>BreatheEasy - Mindful Breathing Assistant</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-    body {
-      background-color: #f8f9fa;
-      font-family: 'Arial', sans-serif;
-    }
-
-    header {
-      background-color: #007bff;
-      color: #fff;
-      padding: 2rem 0;
-      text-align: center;
-    }
-
-    .cta-section {
-      text-align: center;
-      padding: 4rem 1rem;
-    }
-
-    .cta-icon {
-      font-size: 4rem;
-      color: #007bff;
-      margin-bottom: 1rem;
-    }
-
-    .breathing-info {
-      text-align: center;
-      padding: 4rem 1rem;
-    }
-
-
-    .practice-btn {
-  background-color: #007bff; /* Ensure the color covers the entire button */
-  color: #fff;
-  padding: 10px 20px; /* Adjust padding to fit text */
-  font-size: 1rem; /* Adjust font size to fit text */
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background-color 0.3s;
-  white-space: nowrap; /* Prevent text from wrapping */
-  display: inline-block; /* Ensure the button width adjusts to the text */
-  width: auto; /* Allow the button to adjust its width based on content */
-  max-width: 100%; /* Ensure the button doesn't overflow its container */
-  text-align: center; /* Center the text horizontally */
-  box-sizing: border-box; /* Ensure padding is included in the width */
-}
-
-    .practice-btn:hover {
-      background-color: #0056b3;
-    }
-
-    .footer {
-      background-color: #007bff;
-      color: #fff;
-      padding: 2rem 0;
-      text-align: center;
-    }
-
-    .img-fluid {
-      max-width: 100%;
-      height: auto;
-      border-radius: 10px;
-    }
-
-    .breathing-app-section {
-      display: none;
-      margin-top: 2rem;
-      padding: 2rem;
-      background: linear-gradient(to left top, #a9adb0, #46a2c7, #4a68bd);
-      border-radius: 10px;
-      color: #fff;
-      text-align: center;
-    }
-
-    .circle-container {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      margin-top: 2rem;
-      margin-bottom: 2rem;
-      height: 40vh;
-    }
-
-    .circle {
-      width: 50px;
-      height: 50px;
-      background-color: blue;
-      border-radius: 50%;
-      transition: width 6s ease-in-out, height 6s ease-in-out;
-      position: relative;
-    }
-
-    .stopwatch {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      color: white;
-      font-size: 20px;
-    }
-
-    .secondstopwatch {
-      margin-top: 20px;
-      color: white;
-      font-size: 20px;
-      text-align: center;
-    }
-
-    .btn {
-      margin-top: 30px;
-      width: 30%;
-      height: 10%;
-    }
-
-    .reset-btn {
-      margin-top: 10px;
-      width: 100px;
-      height: 10%;
-    }
-
-    @keyframes breathe {
-      0%, 100% {
-        transform: scale(1);
-      }
-      50% {
-        transform: scale(2);
-      }
-    }
-
-    @keyframes changeColor {
-      0% {
-        background-color: rgb(110, 250, 16);
-      }
-      20% {
-        background-color: rgb(40, 179, 225);
-      }
-      40% {
-        background-color: rgb(64, 42, 208);
-      }
-      60% {
-        background-color: violet;
-      }
-      80% {
-        background-color: rgb(215, 215, 17);
-      }
-      100% {
-        background-color: rgb(22, 176, 203);
-      }
-    }
-
-    /* Responsive Styles */
-    @media (max-width: 600px) {
-      .circle-container {
-        margin-top: 2rem;
-      }
-      .breath-dot {
-        width: 50px;
-        height: 50px;
-      }
-    }
-  </style>
+        @keyframes confetti {
+            0% { transform: translateY(0) rotate(0deg); }
+            100% { transform: translateY(-100vh) rotate(360deg); }
+        }
+        .confetti {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            background-color: #f00;
+            animation: confetti 3s linear forwards;
+            z-index: 1000;
+        }
+        .breathing-circle {
+            transition: all 4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .achievement-badge {
+            transition: all 0.3s ease;
+        }
+        .achievement-badge:hover {
+            transform: scale(1.1);
+        }
+        .mood-emoji {
+            font-size: 24px;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        .mood-emoji:hover {
+            transform: scale(1.2);
+        }
+        .selected-mood {
+            transform: scale(1.2);
+            text-shadow: 0 0 10px rgba(0,0,0,0.3);
+        }
+        /* Add styles for form elements */
+        input[type="number"], select {
+            border: 1px solid #d1d5db;
+            border-radius: 0.375rem;
+            padding: 0.5rem;
+            width: 100%;
+            background-color: white;
+            color: #374151;
+        }
+        input[type="number"]:focus, select:focus {
+            outline: none;
+            border-color: #6366f1;
+            box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
+        }
+        select {
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+            background-position: right 0.5rem center;
+            background-repeat: no-repeat;
+            background-size: 1.5em 1.5em;
+            padding-right: 2.5rem;
+        }
+    </style>
 </head>
-<body>
-
-  <!-- Navigation -->
-  <header>
-    <h1>BreatheEasy</h1>
-    <p>Your Guided Breathing Practice</p>
-  </header>
-
-<!-- Call to Action Section -->
-<section class="cta-section">
-    <div class="container">
-      <div class="row">
-        <div class="col-md-8 mx-auto">
-          <i class="fas fa-leaf cta-icon"></i>
-          <h2>Experience the Power of Breath</h2>
-          <p>Find peace and balance through guided breathing sessions. Start your journey to a calmer, healthier you.</p>
-          <button id="startPracticeButton" class="btn btn-primary practice-btn">Start Your Practice</button>
-        </div>
-      </div>
+<body class="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen">
+    <!-- Progress Bar -->
+    <div id="progressBar" class="fixed top-0 left-0 w-full h-1 bg-gray-200">
+        <div id="progressFill" class="h-full bg-indigo-600 transition-all duration-300" style="width: 0%"></div>
     </div>
-  </section>
-  <!-- Breathing App Section -->
-  <section id="breathingAppSection" class="breathing-app-section">
-    <div class="container">
-      <h1>Guided Breathing Mini Sessions</h1>
-      <button id="sessionButton" class="btn btn-success" onclick="toggleSession()">Start</button>
-      <div class="circle-container">
-        <div class="circle" id="expandingCircle">
-          <div class="stopwatch" id="stopwatch">0</div>
+
+    <div class="container mx-auto px-4 py-4">
+        <header class="text-center mb-6">
+            <h1 class="text-3xl md:text-4xl font-bold text-indigo-600 mb-2">BreatheEasy</h1>
+            <p class="text-gray-600">Your personal mindfulness companion</p>
+            <div id="streakCounter" class="mt-2 text-sm text-indigo-600">
+                <i class="fas fa-fire"></i> <span>0 day streak</span>
+            </div>
+        </header>
+
+        <!-- Quick Start Templates -->
+        <div class="max-w-6xl mx-auto mb-6">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                <button class="breathing-template bg-white p-3 rounded-lg shadow-sm hover:shadow-md hover:bg-indigo-50 transition-all text-left" data-preset="4-7-8">
+                    <div class="text-sm font-medium text-indigo-600">Stress Relief</div>
+                    <div class="text-xs text-gray-600">4-7-8 technique</div>
+                </button>
+                <button class="breathing-template bg-white p-3 rounded-lg shadow-sm hover:shadow-md hover:bg-indigo-50 transition-all text-left" data-preset="energy">
+                    <div class="text-sm font-medium text-indigo-600">Energy Boost</div>
+                    <div class="text-xs text-gray-600">Energizing breath</div>
+                </button>
+                <button class="breathing-template bg-white p-3 rounded-lg shadow-sm hover:shadow-md hover:bg-indigo-50 transition-all text-left" data-preset="stress-relief">
+                    <div class="text-sm font-medium text-indigo-600">Better Sleep</div>
+                    <div class="text-xs text-gray-600">Calming breath</div>
+                </button>
+                <button class="breathing-template bg-white p-3 rounded-lg shadow-sm hover:shadow-md hover:bg-indigo-50 transition-all text-left" data-preset="box">
+                    <div class="text-sm font-medium text-indigo-600">Focus Mode</div>
+                    <div class="text-xs text-gray-600">Box breathing</div>
+                </button>
+            </div>
         </div>
-      </div>
-      <div>
-        <div class="secondstopwatch" id="secondstopwatch">00:00:00</div>
-        <div class="secondstopwatch" id="elapsedtime">00:00:00</div>
-      </div>
-      <button id="doneButton" class="btn btn-danger mt-3">I am Done</button>
+
+        <div class="flex flex-col lg:flex-row gap-4 max-w-6xl mx-auto">
+            <!-- Main Breathing App Section -->
+            <div class="flex-1">
+                <div id="breathingApp" class="bg-white rounded-2xl shadow-xl p-4 md:p-6 text-center relative">
+                    <!-- Session Goal -->
+                    <div class="absolute top-4 right-4">
+                        <div class="text-xs text-gray-500">Daily Goal</div>
+                        <div class="text-sm font-medium text-indigo-600" id="sessionGoalDisplay">5 min</div>
+                    </div>
+
+                    <div class="mb-4">
+                        <h2 class="text-xl md:text-2xl font-semibold text-gray-800 mb-2" id="breathState">Ready to begin</h2>
+                        <p class="text-gray-600" id="breathInstruction">Click start to begin your breathing exercise</p>
+                    </div>
+
+                    <!-- Timer Settings with Presets -->
+                    <div class="mb-4">
+                        <div class="flex justify-center space-x-2 mb-3">
+                            <button class="preset-btn px-3 py-1 rounded-full text-xs bg-indigo-100 text-indigo-700 hover:bg-indigo-200 border border-indigo-200">4-4-4</button>
+                            <button class="preset-btn px-3 py-1 rounded-full text-xs bg-indigo-100 text-indigo-700 hover:bg-indigo-200 border border-indigo-200">4-7-8</button>
+                            <button class="preset-btn px-3 py-1 rounded-full text-xs bg-indigo-100 text-indigo-700 hover:bg-indigo-200 border border-indigo-200">Box</button>
+                        </div>
+                        <div class="grid grid-cols-3 gap-2">
+                            <div>
+                                <label class="block text-sm font-medium text-indigo-700">Inhale (s)</label>
+                                <input type="number" id="inhaleTime" value="4" min="1" max="10" 
+                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-indigo-700">Hold (s)</label>
+                                <input type="number" id="holdTime" value="4" min="1" max="10" 
+                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-indigo-700">Exhale (s)</label>
+                                <input type="number" id="exhaleTime" value="4" min="1" max="10" 
+                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Session Duration -->
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-indigo-700">Session Duration</label>
+                        <select id="sessionDuration" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 bg-white">
+                            <option value="60">1 minute</option>
+                            <option value="180">3 minutes</option>
+                            <option value="300" selected>5 minutes</option>
+                            <option value="600">10 minutes</option>
+                            <option value="0">Unlimited</option>
+                        </select>
+                    </div>
+
+                    <div class="relative w-48 h-48 mx-auto mb-4">
+                        <div id="breathingCircle" class="breathing-circle absolute inset-0 bg-indigo-500 rounded-full flex items-center justify-center transform scale-100">
+                            <span class="text-white text-2xl font-bold" id="timer">0</span>
+                        </div>
+                    </div>
+
+                    <div class="space-y-2">
+                        <button id="startButton" class="w-full bg-indigo-600 text-white py-2 px-4 rounded-lg font-medium hover:bg-indigo-700 transition-colors border border-indigo-700">
+                            Start Breathing
+                        </button>
+                        <button id="resetButton" class="w-full bg-gray-700 text-white py-2 px-4 rounded-lg font-medium hover:bg-gray-800 transition-colors border border-gray-800">
+                            Reset
+                        </button>
+                        <div class="text-gray-600">
+                            <span>Session: </span><span id="sessionTime">00:00</span>
+                        </div>
+                        <div class="text-gray-600">
+                            <span>Total Practice: </span><span id="totalPracticeTimeDisplay">0 min</span>
+                        </div>
+                    </div>
+
+                    <!-- Mood Tracker -->
+                    <div id="moodTracker" class="mt-4 hidden">
+                        <p class="text-sm text-gray-600 mb-2">How do you feel after this session?</p>
+                        <div class="flex justify-center space-x-4">
+                            <span class="mood-emoji" data-mood="1">😔</span>
+                            <span class="mood-emoji" data-mood="2">😐</span>
+                            <span class="mood-emoji" data-mood="3">🙂</span>
+                            <span class="mood-emoji" data-mood="4">😊</span>
+                            <span class="mood-emoji" data-mood="5">🥰</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Achievements Section -->
+                <div class="mt-4 bg-white rounded-xl shadow-lg p-4">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-3">Your Achievements</h3>
+                    <div class="grid grid-cols-4 gap-2">
+                        <div class="achievement-badge p-2 text-center" title="First Session">
+                            <i class="fas fa-star text-yellow-400 text-xl"></i>
+                            <div class="text-xs mt-1">First Step</div>
+                        </div>
+                        <div class="achievement-badge p-2 text-center opacity-50" title="Complete 10 sessions">
+                            <i class="fas fa-award text-blue-400 text-xl"></i>
+                            <div class="text-xs mt-1">Beginner</div>
+                        </div>
+                        <div class="achievement-badge p-2 text-center opacity-50" title="7-day streak">
+                            <i class="fas fa-fire text-orange-400 text-xl"></i>
+                            <div class="text-xs mt-1">Consistent</div>
+                        </div>
+                        <div class="achievement-badge p-2 text-center opacity-50" title="30-minute total practice">
+                            <i class="fas fa-clock text-green-400 text-xl"></i>
+                            <div class="text-xs mt-1">Dedicated</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Side Panel -->
+            <div class="flex-1">
+                <!-- Music Section -->
+                <div class="bg-white rounded-xl shadow-lg p-4 mb-4">
+                    <div class="flex items-center justify-between mb-3">
+                        <h3 class="text-lg font-semibold text-gray-800">Ambient Sounds</h3>
+                        <button id="toggleSound" class="text-indigo-700 hover:text-indigo-800 p-2 rounded-full hover:bg-indigo-50">
+                            <i class="fas fa-volume-up"></i>
+                        </button>
+                    </div>
+                    <div class="grid grid-cols-2 gap-2 mb-4">
+                        <button class="sound-btn p-2 bg-indigo-50 rounded-lg text-sm text-indigo-700 hover:bg-indigo-100 border border-indigo-100" data-youtube-id="4u_O-NtaBeo">
+                            <i class="fas fa-water mr-1"></i> Manifestation
+                        </button>
+                        <button class="sound-btn p-2 bg-indigo-50 rounded-lg text-sm text-indigo-700 hover:bg-indigo-100 border border-indigo-100" data-youtube-id="y615vOsiG5w">
+                            <i class="fas fa-cloud-rain mr-1"></i> Rain
+                        </button>
+                        <button class="sound-btn p-2 bg-indigo-50 rounded-lg text-sm text-indigo-700 hover:bg-indigo-100 border border-indigo-100" data-youtube-id="yR4E2wJ--S8">
+                            <i class="fas fa-wind mr-1"></i> breeze
+                        </button>
+                        <button class="sound-btn p-2 bg-indigo-50 rounded-lg text-sm text-indigo-700 hover:bg-indigo-100 border border-indigo-100" data-youtube-id="kJx2-WlCxD4">
+                            <i class="fas fa-music mr-1"></i> Meditation
+                        </button>
+                    </div>
+                </div>
+                
+
+                <!-- Stats and Progress -->
+                <div class="bg-white rounded-xl shadow-lg p-4 mb-4">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-3">Your Progress</h3>
+                    <div class="grid grid-cols-2 gap-4 mb-4">
+                        <div class="text-center">
+                            <div class="text-2xl font-bold text-indigo-600" id="totalSessionsDisplay">0</div>
+                            <div class="text-sm text-gray-600">Total Sessions</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-2xl font-bold text-indigo-600" id="totalPracticeDisplay">0 min</div>
+                            <div class="text-sm text-gray-600">Total Practice</div>
+                        </div>
+                    </div>
+                    <div class="space-y-3">
+                        <div>
+                            <div class="flex justify-between text-sm mb-1">
+                                <span class="text-gray-600">Daily Goal</span>
+                                <span class="text-indigo-600">2/5 min</span>
+                            </div>
+                            <div class="h-2 bg-gray-200 rounded-full">
+                                <div class="h-full bg-indigo-600 rounded-full" style="width: 40%"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between text-sm mb-1">
+                                <span class="text-gray-600">Weekly Goal</span>
+                                <span class="text-indigo-600">15/35 min</span>
+                            </div>
+                            <div class="h-2 bg-gray-200 rounded-full">
+                                <div class="h-full bg-indigo-600 rounded-full" style="width: 43%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Benefits Section -->
+                <div class="bg-white rounded-xl shadow-lg p-4">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-lg font-semibold text-gray-800">Benefits</h3>
+                    </div>
+                    <img src="yogaa.jpg" alt="Breathing Exercise" class="w-full h-48 object-cover rounded-lg mb-4">
+                    <ul class="space-y-2 text-gray-600 text-sm">
+                        <li class="flex items-center">
+                            <i class="fas fa-brain text-indigo-400 mr-2"></i>
+                            <span>Reduces stress and anxiety</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-lightbulb text-yellow-400 mr-2"></i>
+                            <span>Improves focus and mental clarity</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-moon text-blue-400 mr-2"></i>
+                            <span>Enhances sleep quality</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-heartbeat text-red-400 mr-2"></i>
+                            <span>Lowers blood pressure</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-smile text-green-400 mr-2"></i>
+                            <span>Boosts mood and energy</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
     </div>
-  </section>
 
-  <!-- Breathing Info Section -->
-  <section class="breathing-info">
-    <div class="container">
-      <div class="row">
-        <div class="col-md-6">
-          <h3>Why Guided Breathing?</h3>
-          <p>Learn about the benefits of mindful breathing and how it can positively impact your mental and physical well-being.</p>
+    <!-- Add this after the body tag -->
+    <div id="achievement-notification" class="fixed top-5 right-5 bg-white p-3 rounded-lg shadow-lg hidden z-50 transform transition-transform duration-300 -translate-x-full">
+        <div class="flex items-center">
+            <div class="mr-3 text-2xl">🏆</div>
+            <div>
+                <div class="font-bold text-indigo-600" id="achievement-title">Achievement Unlocked!</div>
+                <div class="text-sm text-gray-600" id="achievement-description">You've completed your first session!</div>
+            </div>
         </div>
-        <div class="col-md-6">
-          <img src="yogaa.jpg" alt="Breathing Exercise" class="img-fluid">
-        </div>
-      </div>
     </div>
-  </section>
 
-  <!-- Footer -->
-  <footer class="footer">
-    <p>&copy; 2024 BreatheEasy. All rights reserved.</p>
-  </footer>
+    <!-- Add this before the closing tag for YouTube API -->
+    <div id="youtube-player" class="hidden"></div>
 
-  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js"></script>
-  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-  <script>
-    // Breathing App Script
-    let isRunning = false;
-    let intervalId;
-    let secondStopwatchIntervalId;
-    let totalElapsedTime = 0;
-    let sessionStartTime = 0;
-    let totalSessionTime = 0;
+    <script>
+        const BREATH_CYCLE = {
+            INHALE: { text: 'Breathe in...', color: 'bg-indigo-500' },
+            HOLD: { text: 'Hold...', color: 'bg-indigo-600' },
+            EXHALE: { text: 'Breathe out...', color: 'bg-indigo-400' }
+        };
 
-    function expandCircle() {
-      const expandingCircle = document.getElementById('expandingCircle');
-      expandingCircle.style.width = '200px';
-      expandingCircle.style.height = '200px';
-    }
+        const BREATHING_PRESETS = {
+            'box': { inhale: 4, hold: 4, exhale: 4 },
+            '4-7-8': { inhale: 4, hold: 7, exhale: 8 },
+            'stress-relief': { inhale: 4, hold: 4, exhale: 6 },
+            'energy': { inhale: 6, hold: 2, exhale: 4 }
+        };
 
-    function shrinkCircle() {
-      const expandingCircle = document.getElementById('expandingCircle');
-      expandingCircle.style.width = '50px';
-      expandingCircle.style.height = '50px';
-    }
+        const state = {
+            isRunning: false,
+            currentPhase: null,
+            startTime: null,
+            sessionInterval: null,
+            breathInterval: null,
+            totalCycles: 0,
+            sessionDuration: parseInt(localStorage.getItem('sessionDuration') || '300'), // 5 minutes default
+            streakCount: parseInt(localStorage.getItem('streakCount') || '0'),
+            lastSessionDate: localStorage.getItem('lastSessionDate'),
+            totalPracticeTime: parseInt(localStorage.getItem('totalPracticeTime') || '0'),
+            totalSessions: parseInt(localStorage.getItem('totalSessions') || '0'),
+            moodHistory: JSON.parse(localStorage.getItem('moodHistory') || '[]'),
+            achievements: JSON.parse(localStorage.getItem('achievements') || '[]'),
+            dailyGoal: parseInt(localStorage.getItem('dailyGoal') || '300'), // 5 minutes default
+            weeklyGoal: parseInt(localStorage.getItem('weeklyGoal') || '2100'), // 35 minutes default
+            dailyProgress: parseInt(localStorage.getItem('dailyProgress') || '0'),
+            weeklyProgress: parseInt(localStorage.getItem('weeklyProgress') || '0'),
+            lastWeek: localStorage.getItem('lastWeek') || getWeekNumber(new Date())
+        };
 
-    function updateStopwatch(time) {
-      const stopwatch = document.getElementById('stopwatch');
-      stopwatch.innerText = time;
-    }
+        const ACHIEVEMENTS = {
+            'first-step': {
+                icon: 'fa-star',
+                color: 'text-yellow-400',
+                title: 'First Step',
+                description: 'Complete your first breathing session',
+                condition: (stats) => stats.totalSessions >= 1
+            },
+            'beginner': {
+                icon: 'fa-award',
+                color: 'text-blue-400',
+                title: 'Beginner',
+                description: 'Complete 10 sessions',
+                condition: (stats) => stats.totalSessions >= 10
+            },
+            'consistent': {
+                icon: 'fa-fire',
+                color: 'text-orange-400',
+                title: 'Consistent',
+                description: 'Achieve a 7-day streak',
+                condition: (stats) => stats.streakCount >= 7
+            },
+            'dedicated': {
+                icon: 'fa-clock',
+                color: 'text-green-400',
+                title: 'Dedicated',
+                description: 'Practice for 30 minutes total',
+                condition: (stats) => stats.totalPracticeTime >= 1800
+            }
+        };
 
-    function updateSecondStopwatch() {
-      const secondStopwatch = document.getElementById('secondstopwatch');
-      let totalSeconds = Math.floor(totalElapsedTime / 1000);
-      let hours = Math.floor(totalSeconds / 3600);
-      let minutes = Math.floor((totalSeconds % 3600) / 60);
-      let seconds = totalSeconds % 60;
+        const elements = {
+            circle: document.getElementById('breathingCircle'),
+            timer: document.getElementById('timer'),
+            state: document.getElementById('breathState'),
+            instruction: document.getElementById('breathInstruction'),
+            startButton: document.getElementById('startButton'),
+            resetButton: document.getElementById('resetButton'),
+            sessionTime: document.getElementById('sessionTime'),
+            totalPracticeTimeDisplay: document.getElementById('totalPracticeTimeDisplay'),
+            inhaleTime: document.getElementById('inhaleTime'),
+            holdTime: document.getElementById('holdTime'),
+            exhaleTime: document.getElementById('exhaleTime'),
+            moodTracker: document.getElementById('moodTracker'),
+            progressFill: document.getElementById('progressFill'),
+            streakCounter: document.getElementById('streakCounter').querySelector('span'),
+            achievementNotification: document.getElementById('achievement-notification'),
+            achievementTitle: document.getElementById('achievement-title'),
+            achievementDescription: document.getElementById('achievement-description'),
+            toggleSound: document.getElementById('toggleSound')
+        };
 
-      hours = hours < 10 ? "0" + hours : hours;
-      minutes = minutes < 10 ? "0" + minutes : minutes;
-      seconds = seconds < 10 ? "0" + seconds : seconds;
-
-      secondStopwatch.innerText = `${hours}:${minutes}:${seconds}`;
-    }
-
-    function animateCircle() {
-      let currentTime = 0;
-
-      intervalId = setInterval(() => {
-        if (currentTime <= 6) {
-          updateStopwatch(currentTime);
-          expandCircle();
-        } else {
-          updateStopwatch(12 - currentTime);
-          shrinkCircle();
+        // Update streak counter
+        function updateStreak() {
+            const today = new Date().toLocaleDateString();
+            if (state.lastSessionDate !== today) {
+                const yesterday = new Date(Date.now() - 86400000).toLocaleDateString();
+                
+                if (state.lastSessionDate === yesterday) {
+                    state.streakCount++;
+                } else if (!state.lastSessionDate || new Date(state.lastSessionDate) < new Date(yesterday)) {
+                    state.streakCount = 1;
+                }
+                
+                state.lastSessionDate = today;
+                localStorage.setItem('streakCount', state.streakCount);
+                localStorage.setItem('lastSessionDate', today);
+            }
+            
+            elements.streakCounter.textContent = `${state.streakCount} day streak`;
         }
 
-        if (currentTime === 12) {
-          currentTime = 0;
+        function updateStats() {
+            // Update the stats display in the right panel
+            const totalSessionsEl = document.getElementById('totalSessionsDisplay');
+            const totalPracticeEl = document.getElementById('totalPracticeDisplay');
+            
+            // Make sure total sessions is updated
+            if (totalSessionsEl) {
+                totalSessionsEl.textContent = state.totalSessions;
+            }
+            
+            // Make sure total practice time is updated and consistent
+            const totalMinutes = Math.floor(state.totalPracticeTime / 60);
+            const totalSeconds = state.totalPracticeTime % 60;
+            
+            if (totalPracticeEl) {
+                totalPracticeEl.textContent = `${totalMinutes} min`;
+            }
+            
+            // Update the total practice time display below the timer to show the same data
+            elements.totalPracticeTimeDisplay.textContent = 
+                `${totalMinutes} min ${totalSeconds} sec`;
+            
+            // Update the daily and weekly progress
+            updateDailyWeeklyProgress();
         }
 
-        currentTime++;
-      }, 1000);
-
-      secondStopwatchIntervalId = setInterval(() => {
-        if (isRunning) {
-          totalElapsedTime += 1000;
-          updateSecondStopwatch();
+        // Function to update daily and weekly progress
+        function updateDailyWeeklyProgress() {
+            const today = new Date().toLocaleDateString();
+            const currentWeek = getWeekNumber(new Date());
+            
+            // Reset daily progress if it's a new day
+            if (state.lastSessionDate !== today) {
+                state.dailyProgress = 0;
+            }
+            
+            // Reset weekly progress if it's a new week
+            if (state.lastWeek !== currentWeek) {
+                state.weeklyProgress = 0;
+                state.lastWeek = currentWeek;
+                localStorage.setItem('lastWeek', currentWeek);
+            }
+            
+            // Update the progress displays
+            const dailyGoalEl = document.querySelector('.space-y-3 div:nth-child(1) .flex .text-indigo-600');
+            const weeklyGoalEl = document.querySelector('.space-y-3 div:nth-child(2) .flex .text-indigo-600');
+            const dailyProgressBar = document.querySelector('.space-y-3 div:nth-child(1) .h-2 .bg-indigo-600');
+            const weeklyProgressBar = document.querySelector('.space-y-3 div:nth-child(2) .h-2 .bg-indigo-600');
+            const sessionGoalDisplay = document.getElementById('sessionGoalDisplay');
+            
+            if (sessionGoalDisplay) {
+                const dailyGoalMinutes = Math.floor(state.dailyGoal / 60);
+                sessionGoalDisplay.textContent = `${dailyGoalMinutes} min`;
+            }
+            
+            if (dailyGoalEl) {
+                const dailyMinutes = Math.floor(state.dailyProgress / 60);
+                const dailyGoalMinutes = Math.floor(state.dailyGoal / 60);
+                dailyGoalEl.textContent = `${dailyMinutes}/${dailyGoalMinutes} min`;
+            }
+            
+            if (weeklyGoalEl) {
+                const weeklyMinutes = Math.floor(state.weeklyProgress / 60);
+                const weeklyGoalMinutes = Math.floor(state.weeklyGoal / 60);
+                weeklyGoalEl.textContent = `${weeklyMinutes}/${weeklyGoalMinutes} min`;
+            }
+            
+            if (dailyProgressBar) {
+                const dailyPercentage = Math.min(100, (state.dailyProgress / state.dailyGoal) * 100);
+                dailyProgressBar.style.width = `${dailyPercentage}%`;
+            }
+            
+            if (weeklyProgressBar) {
+                const weeklyPercentage = Math.min(100, (state.weeklyProgress / state.weeklyGoal) * 100);
+                weeklyProgressBar.style.width = `${weeklyPercentage}%`;
+            }
+            
+            // Save progress to localStorage
+            localStorage.setItem('dailyProgress', state.dailyProgress);
+            localStorage.setItem('weeklyProgress', state.weeklyProgress);
         }
-      }, 1000);
-    }
 
-    function toggleSession() {
-      const button = document.getElementById('sessionButton');
+        function updateAchievementDisplay() {
+            // Update achievement badges
+            Object.keys(ACHIEVEMENTS).forEach(id => {
+                const achievement = ACHIEVEMENTS[id];
+                const badge = document.querySelector(`.achievement-badge[title="${achievement.title}"]`);
+                
+                if (badge && state.achievements.includes(id)) {
+                    badge.classList.remove('opacity-50');
+                }
+            });
+        }
 
-      if (!isRunning) {
-        button.textContent = 'Stop';
-        isRunning = true;
-        sessionStartTime = Date.now();
-        animateCircle();
-      } else {
-        button.textContent = 'Start';
-        isRunning = false;
-        clearInterval(intervalId);
-        clearInterval(secondStopwatchIntervalId);
-        shrinkCircle();
-        updateStopwatch(0);
-        totalSessionTime += Date.now() - sessionStartTime;
-        displayTotalSessionTime();
-        resetSecondStopwatch();
-      }
-    }
+        function showAchievementNotification(achievement) {
+            elements.achievementTitle.textContent = `Achievement Unlocked: ${achievement.title}`;
+            elements.achievementDescription.textContent = achievement.description;
+            elements.achievementNotification.classList.remove('hidden', '-translate-x-full');
+            elements.achievementNotification.classList.add('translate-x-0');
+            
+            setTimeout(() => {
+                elements.achievementNotification.classList.add('-translate-x-full');
+                setTimeout(() => {
+                    elements.achievementNotification.classList.add('hidden');
+                }, 500);
+            }, 3000);
+        }
 
-    function displayTotalSessionTime() {
-      const elapsedTimeElement = document.getElementById('elapsedtime');
-      let totalSeconds = Math.floor(totalSessionTime / 1000);
-      let hours = Math.floor(totalSeconds / 3600);
-      let minutes = Math.floor((totalSeconds % 3600) / 60);
-      let seconds = totalSeconds % 60;
+        function checkAchievements() {
+            const stats = {
+                totalSessions: state.totalSessions,
+                totalPracticeTime: state.totalPracticeTime,
+                streakCount: state.streakCount
+            };
+            
+            Object.keys(ACHIEVEMENTS).forEach(id => {
+                const achievement = ACHIEVEMENTS[id];
+                if (!state.achievements.includes(id) && achievement.condition(stats)) {
+                    state.achievements.push(id);
+                    localStorage.setItem('achievements', JSON.stringify(state.achievements));
+                    showAchievementNotification(achievement);
+                }
+            });
+            
+            updateAchievementDisplay();
+        }
 
-      hours = hours < 10 ? "0" + hours : hours;
-      minutes = minutes < 10 ? "0" + minutes : minutes;
-      seconds = seconds < 10 ? "0" + seconds : seconds;
+        function createConfetti() {
+            const colors = ['#f00', '#0f0', '#00f', '#ff0', '#f0f'];
+            for (let i = 0; i < 50; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                confetti.style.left = Math.random() * window.innerWidth + 'px';
+                confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                confetti.style.animationDelay = Math.random() * 2 + 's';
+                document.body.appendChild(confetti);
+                setTimeout(() => confetti.remove(), 3000);
+            }
+        }
 
-      elapsedTimeElement.innerText = `${hours}:${minutes}:${seconds}`;
-    }
+        function updateBreathingCircle(phase) {
+            const duration = getCurrentDuration();
+            elements.circle.style.transitionDuration = `${duration}ms`;
+            
+            if (phase === BREATH_CYCLE.INHALE) {
+                elements.circle.className = `breathing-circle absolute inset-0 ${phase.color} rounded-full flex items-center justify-center transform scale-150`;
+            } else {
+                elements.circle.className = `breathing-circle absolute inset-0 ${phase.color} rounded-full flex items-center justify-center transform scale-100`;
+            }
+            
+            elements.state.textContent = phase.text;
+        }
 
-    function resetSecondStopwatch() {
-      totalElapsedTime = 0;
-      updateSecondStopwatch();
-    }
+        function getCurrentDuration() {
+            if (state.currentPhase === BREATH_CYCLE.INHALE) return elements.inhaleTime.value * 1000;
+            if (state.currentPhase === BREATH_CYCLE.HOLD) return elements.holdTime.value * 1000;
+            return elements.exhaleTime.value * 1000;
+        }
 
-    // Show Breathing App when "Start Your Practice" is clicked
-    document.getElementById('startPracticeButton').addEventListener('click', function() {
-      const breathingAppSection = document.getElementById('breathingAppSection');
-      breathingAppSection.style.display = 'block';
-    });
+        function updateProgress(elapsed) {
+            if (state.sessionDuration > 0) {
+                const progress = (elapsed / (state.sessionDuration * 1000)) * 100;
+                elements.progressFill.style.width = `${Math.min(progress, 100)}%`;
+            }
+        }
 
-    // Hide Breathing App when "I am Done" is clicked
-    document.getElementById('doneButton').addEventListener('click', function() {
-      const breathingAppSection = document.getElementById('breathingAppSection');
-      breathingAppSection.style.display = 'none';
-    });
-  </script>
+        function startBreathingCycle() {
+            let cycleTime = 0;
+            const totalCycleTime = parseInt(elements.inhaleTime.value) + parseInt(elements.holdTime.value) + parseInt(elements.exhaleTime.value);
+
+            state.breathInterval = setInterval(() => {
+                cycleTime = (cycleTime + 100) % (totalCycleTime * 1000);
+                
+                if (cycleTime < parseInt(elements.inhaleTime.value) * 1000) {
+                    state.currentPhase = BREATH_CYCLE.INHALE;
+                } else if (cycleTime < (parseInt(elements.inhaleTime.value) + parseInt(elements.holdTime.value)) * 1000) {
+                    state.currentPhase = BREATH_CYCLE.HOLD;
+                } else {
+                    state.currentPhase = BREATH_CYCLE.EXHALE;
+                }
+
+                updateBreathingCircle(state.currentPhase);
+                elements.timer.textContent = Math.ceil((getCurrentDuration() - (cycleTime % getCurrentDuration())) / 1000);
+            }, 100);
+        }
+
+        function startSession() {
+            state.isRunning = true;
+            state.startTime = Date.now();
+            elements.startButton.textContent = 'Stop';
+            elements.instruction.textContent = 'Follow the circle and breathe';
+            elements.moodTracker.classList.add('hidden');
+            
+            state.sessionDuration = parseInt(document.getElementById('sessionDuration').value);
+            localStorage.setItem('sessionDuration', state.sessionDuration);
+            
+            startBreathingCycle();
+            
+            state.sessionInterval = setInterval(() => {
+                const elapsed = Math.floor((Date.now() - state.startTime) / 1000);
+                const minutes = Math.floor(elapsed / 60).toString().padStart(2, '0');
+                const seconds = (elapsed % 60).toString().padStart(2, '0');
+                elements.sessionTime.textContent = `${minutes}:${seconds}`;
+                updateProgress(elapsed * 1000);
+
+                if (state.sessionDuration > 0 && elapsed >= state.sessionDuration) {
+                    stopSession();
+                }
+            }, 1000);
+        }
+
+        function stopSession() {
+            if (!state.isRunning) return; // Prevent double counting
+            
+            state.isRunning = false;
+            elements.startButton.textContent = 'Start Breathing';
+            elements.instruction.textContent = 'Click start to begin your breathing exercise';
+            elements.state.textContent = 'Ready to begin';
+            elements.circle.className = 'breathing-circle absolute inset-0 bg-indigo-500 rounded-full flex items-center justify-center transform scale-100';
+            elements.timer.textContent = '0';
+            elements.moodTracker.classList.remove('hidden');
+            
+            const sessionTime = Math.floor((Date.now() - state.startTime) / 1000);
+            
+            // Only count sessions that lasted at least 5 seconds
+            if (sessionTime >= 5) {
+                state.totalPracticeTime += sessionTime;
+                state.totalSessions++;
+                
+                // Update the daily and weekly progress
+                state.dailyProgress += sessionTime;
+                state.weeklyProgress += sessionTime;
+                
+                // Save to localStorage
+                localStorage.setItem('totalPracticeTime', state.totalPracticeTime);
+                localStorage.setItem('totalSessions', state.totalSessions);
+                localStorage.setItem('dailyProgress', state.dailyProgress);
+                localStorage.setItem('weeklyProgress', state.weeklyProgress);
+                
+                updateStreak();
+                updateStats();
+                checkAchievements();
+                createConfetti();
+            }
+            
+            clearInterval(state.breathInterval);
+            clearInterval(state.sessionInterval);
+        }
+
+        function resetSession() {
+            stopSession();
+            elements.sessionTime.textContent = '00:00';
+            elements.progressFill.style.width = '0%';
+            state.totalCycles = 0;
+        }
+
+        // Breathing Templates
+        document.querySelectorAll('.breathing-template').forEach(template => {
+            template.addEventListener('click', function() {
+                const preset = this.dataset.preset;
+                if (preset) {
+                    const breathingPreset = BREATHING_PRESETS[preset];
+                    if (breathingPreset) {
+                        elements.inhaleTime.value = breathingPreset.inhale;
+                        elements.holdTime.value = breathingPreset.hold;
+                        elements.exhaleTime.value = breathingPreset.exhale;
+                    }
+                }
+            });
+        });
+
+        // Event Listeners
+        elements.startButton.addEventListener('click', () => {
+            if (state.isRunning) {
+                stopSession();
+            } else {
+                startSession();
+            }
+        });
+
+        elements.resetButton.addEventListener('click', resetSession);
+
+        // Mood Tracking
+        document.querySelectorAll('.mood-emoji').forEach(emoji => {
+            emoji.addEventListener('click', function() {
+                const mood = parseInt(this.dataset.mood);
+                state.moodHistory.push({
+                    date: new Date().toISOString(),
+                    mood: mood,
+                    sessionDuration: Math.floor((Date.now() - state.startTime) / 1000)
+                });
+                localStorage.setItem('moodHistory', JSON.stringify(state.moodHistory));
+                
+                document.querySelectorAll('.mood-emoji').forEach(e => e.classList.remove('selected-mood'));
+                this.classList.add('selected-mood');
+            });
+        });
+
+        // Sound Controls with YouTube API
+        let player = null;
+        let currentVideoId = null;
+
+        // Load YouTube API
+        function loadYouTubeAPI() {
+            const tag = document.createElement('script');
+            tag.src = "https://www.youtube.com/iframe_api";
+            const firstScriptTag = document.getElementsByTagName('script')[0];
+            firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+        }
+
+        // Called automatically by YouTube API when ready
+        function onYouTubeIframeAPIReady() {
+            player = new YT.Player('youtube-player', {
+                height: '0',
+                width: '0',
+                playerVars: {
+                    'playsinline': 1,
+                    'controls': 0,
+                    'disablekb': 1,
+                    'loop': 1,
+                    'playlist': '4u_O-NtaBeo' // Default playlist for looping
+                },
+                events: {
+                    'onReady': onPlayerReady,
+                    'onStateChange': onPlayerStateChange
+                }
+            });
+        }
+
+        function onPlayerReady(event) {
+            // Player is ready
+        }
+
+        function onPlayerStateChange(event) {
+            // Update UI based on player state
+            if (event.data === YT.PlayerState.ENDED) {
+                // Video ended, restart
+                if (currentVideoId) {
+                    playYouTubeSound(currentVideoId);
+                }
+            } else if (event.data === YT.PlayerState.PLAYING) {
+                // Highlight the active button
+                const activeButton = document.querySelector(`.sound-btn[data-youtube-id="${currentVideoId}"]`);
+                if (activeButton) {
+                    document.querySelectorAll('.sound-btn').forEach(b => b.classList.remove('bg-indigo-200'));
+                    activeButton.classList.add('bg-indigo-200');
+                    
+                    // Update the volume icon to show sound is playing
+                    const volumeIcon = document.querySelector('#toggleSound i');
+                    if (volumeIcon) {
+                        volumeIcon.className = 'fas fa-volume-up';
+                    }
+                }
+            }
+        }
+
+        // Update the player loading to include looping
+        function playYouTubeSound(videoId) {
+            // Extract the video ID if it contains additional parameters
+            if (videoId.includes('?')) {
+                videoId = videoId.split('?')[0];
+            }
+            
+            if (player && player.loadVideoById) {
+                player.loadVideoById({
+                    'videoId': videoId,
+                    'startSeconds': 0,
+                    'suggestedQuality': 'small',
+                    'loop': 1
+                });
+                player.setLoop(true);
+                player.playVideo();
+                currentVideoId = videoId;
+            }
+        }
+
+        // Update the sound button click handler
+        document.querySelectorAll('.sound-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const videoId = this.dataset.youtubeId;
+                
+                if (currentVideoId === videoId) {
+                    // Toggle current sound
+                    if (player && player.getPlayerState() === YT.PlayerState.PLAYING) {
+                        player.pauseVideo();
+                        this.classList.remove('bg-indigo-200');
+                    } else if (player) {
+                        player.playVideo();
+                        document.querySelectorAll('.sound-btn').forEach(b => b.classList.remove('bg-indigo-200'));
+                        this.classList.add('bg-indigo-200');
+                    }
+                } else {
+                    // Play new sound
+                    document.querySelectorAll('.sound-btn').forEach(b => b.classList.remove('bg-indigo-200'));
+                    this.classList.add('bg-indigo-200');
+                    
+                    if (player) {
+                        playYouTubeSound(videoId);
+                    }
+                }
+            });
+        });
+
+        // Toggle all audio on/off
+        document.getElementById('toggleSound').addEventListener('click', function() {
+            const icon = this.querySelector('i');
+            if (player && player.getPlayerState() === YT.PlayerState.PLAYING) {
+                player.pauseVideo();
+                document.querySelectorAll('.sound-btn').forEach(b => b.classList.remove('bg-indigo-200'));
+                icon.className = 'fas fa-volume-mute';
+            } else if (player && currentVideoId) {
+                player.playVideo();
+                document.querySelector(`.sound-btn[data-youtube-id="${currentVideoId}"]`).classList.add('bg-indigo-200');
+                icon.className = 'fas fa-volume-up';
+            }
+        });
+
+        // Load YouTube API on page load
+        loadYouTubeAPI();
+
+        // Initialize the app
+        updateStreak();
+        updateStats();
+        updateAchievementDisplay();
+        checkAchievements();
+
+        // Set initial values for progress bars
+        const dailyProgressBar = document.querySelector('.space-y-3 div:nth-child(1) .h-2 .bg-indigo-600');
+        const weeklyProgressBar = document.querySelector('.space-y-3 div:nth-child(2) .h-2 .bg-indigo-600');
+        const dailyGoalEl = document.querySelector('.space-y-3 div:nth-child(1) .flex .text-indigo-600');
+        const weeklyGoalEl = document.querySelector('.space-y-3 div:nth-child(2) .flex .text-indigo-600');
+
+        if (dailyProgressBar) {
+            const dailyPercentage = Math.min(100, (state.dailyProgress / state.dailyGoal) * 100);
+            dailyProgressBar.style.width = `${dailyPercentage}%`;
+        }
+
+        if (weeklyProgressBar) {
+            const weeklyPercentage = Math.min(100, (state.weeklyProgress / state.weeklyGoal) * 100);
+            weeklyProgressBar.style.width = `${weeklyPercentage}%`;
+        }
+
+        if (dailyGoalEl) {
+            const dailyMinutes = Math.floor(state.dailyProgress / 60);
+            const dailyGoalMinutes = Math.floor(state.dailyGoal / 60);
+            dailyGoalEl.textContent = `${dailyMinutes}/${dailyGoalMinutes} min`;
+        }
+
+        if (weeklyGoalEl) {
+            const weeklyMinutes = Math.floor(state.weeklyProgress / 60);
+            const weeklyGoalMinutes = Math.floor(state.weeklyGoal / 60);
+            weeklyGoalEl.textContent = `${weeklyMinutes}/${weeklyGoalMinutes} min`;
+        }
+
+        // Function to get the week number for a date
+        function getWeekNumber(date) {
+            const firstDayOfYear = new Date(date.getFullYear(), 0, 1);
+            const pastDaysOfYear = (date - firstDayOfYear) / 86400000;
+            return Math.ceil((pastDaysOfYear + firstDayOfYear.getDay() + 1) / 7);
+        }
+    </script>
 </body>
 </html>
